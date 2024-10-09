@@ -1,42 +1,50 @@
 import os
 import googleapiclient.discovery
+import logging
 
 # Replace with your YouTube Data API key
 API_KEY = "AIzaSyCKuURoscr8GES6QWsCJKvJ1T4hzN1JZ4Q"
 
+# Set up logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
 # Function to extract video ID from YouTube URL
 def get_video_id(youtube_url):
+    # Check for the standard YouTube video URL
     if "v=" in youtube_url:
         return youtube_url.split("v=")[1].split("&")[0]
+    # Check for YouTube Shorts URL
+    elif "shorts/" in youtube_url:
+        return youtube_url.split("shorts/")[1].split("?")[0]
     return None
 
 # Function to fetch top comments
-def fetch_top_comments(video_id, api_key, max_results=200):
+def fetch_top_comments(video_id, api_key, max_results=50):
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=api_key)
 
     comments = []
     next_page_token = None
 
-    while len(comments) < max_results:
-        # Make a request to the YouTube API to get video comments
-        request = youtube.commentThreads().list(
-            part="snippet",
-            videoId=video_id,
-            maxResults=min(max_results - len(comments), 200),
-            pageToken=next_page_token,
-            order="relevance",  # Fetch top comments (can change to 'time' for recent comments)
-        )
-        response = request.execute()
+    try:
+        while len(comments) < max_results:
+            request = youtube.commentThreads().list(
+                part="snippet",
+                videoId=video_id,
+                maxResults=min(max_results - len(comments), 50),
+                pageToken=next_page_token,
+                order="relevance",
+            )
+            response = request.execute()
 
-        # Extract comments from the response
-        for item in response.get("items", []):
-            comment = item["snippet"]["topLevelComment"]["snippet"]["textDisplay"]
-            comments.append(comment)
+            for item in response.get("items", []):
+                comment = item["snippet"]["topLevelComment"]["snippet"]["textDisplay"]
+                comments.append(comment)
 
-        # Check if there's another page of comments
-        next_page_token = response.get("nextPageToken")
-        if not next_page_token:
-            break
+            next_page_token = response.get("nextPageToken")
+            if not next_page_token:
+                break
+    except Exception as e:
+        logging.error(f"An error occurred while fetching comments: {e}")
 
     return comments
 
@@ -58,6 +66,11 @@ def main(youtube_url):
     save_comments_to_file(comments)
 
 if __name__ == "__main__":
-    # Replace this with the YouTube video link you want to analyze
-    youtube_link = "https://www.youtube.com/watch?v=GBeI4hLkUL0"
-    main(youtube_link)
+    youtube_link = "link.txt"
+    if os.path.exists(youtube_link):
+        with open(youtube_link, 'r') as file:
+            video_link = file.read().strip()
+            logging.debug(f"Read link: {video_link}")
+            main(video_link)
+    else:
+        logging.error(f"Link file {youtube_link} does not exist")

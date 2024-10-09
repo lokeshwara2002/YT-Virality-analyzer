@@ -1,14 +1,36 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Form
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 import subprocess
 import os
 import sys
+import asyncio
 
 app = FastAPI()
 
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Adjust this as needed for security
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Serve static files
+app.mount("/static", StaticFiles(directory="."), name="static")
+
 # Endpoint to process the YouTube link
 @app.post("/process")
-async def process_youtube_link():
+async def process_youtube_link(link: str = Form(...)):
+    # Save the link to link.txt
+    with open("link.txt", "w") as f:
+        f.write(link)
+
+    # Introduce a 3-second delay
+    await asyncio.sleep(3)
+
     try:
         # Execute the Python scripts in sequence using the correct Python interpreter
         python_exec = sys.executable  # Get the correct Python executable path

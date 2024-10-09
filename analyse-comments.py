@@ -74,6 +74,11 @@ def extract_top_keywords(comments, top_n=20):
     word_counts = Counter(words)
     return word_counts.most_common(top_n)
 
+# Read the transcribe summary
+def read_transcribe_summary(file_path='transcribe-summary.txt'):
+    with open(file_path, 'r') as file:
+        return file.read()
+
 # Main analysis function
 def main(file_name="comments.txt"):
     comments = load_comments(file_name)
@@ -123,6 +128,9 @@ def main(file_name="comments.txt"):
     for word, count in top_keywords:
         print(f"{word}: {count}")
 
+    # Read the transcribe summary
+    transcribe_summary = read_transcribe_summary()
+
     # Save the insights to comments-analysis.txt
     with open("comments-analysis.txt", "w", encoding="utf-8") as f:
         if timestamp_comments:
@@ -133,6 +141,9 @@ def main(file_name="comments.txt"):
 
         f.write("Summary of Comments (What the video is about):\n")
         f.write(f"{summary}\n\n")
+
+        f.write("Transcribe Summary:\n")
+        f.write(f"{transcribe_summary}\n\n")  # Write the transcribe summary here
 
         f.write("Sentiment Analysis (Viewers' opinions):\n")
         f.write(f"Positive: {sentiments['positive']}%\n")

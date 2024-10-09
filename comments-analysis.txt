@@ -1,52 +1,51 @@
 Summary of Comments (What the video is about):
-A single cow feeds a lot of people, while a single person can eat many sardines or shrimp in a single seating. Pork is the most widely eaten meat in the world. Lamb, Goat, sheep are the happiest. The U.S. consumes over 12 million tons of beef last year while only 350,000 tons of octopus were eaten last year worldwide. Octopus is on here but cows aren&#39;t? When looking at the most consumed animals by humans based on weight, the list generally includes larger animals that provide more meat per unit. Here&#39;s a general list: **Cattle (Beef)**. **Pigs (Pork)**: Pigs are also high on the list because of their size. This list is approximate and can vary depending on regional preferences, dietary habits, and the availability of these animals in different parts of the world. In India, buffalo meat (often called carabeef) is widely consumed. 1 cow gives you approx over 800+ meals, whilst 1 Chicken gives you around 5 meals. So you only need to kill 1 cow to feed 800 humans, but 160 Chickens to feed the same amount. The list doesn't accurately reflect the global consumption of animals based on common metrics like production volume and consumption rates. Messi and Ronaldo are eaten the most in asian. While sardines are popular, they aren&#39;t individually among the top consumed animals. Shrimp is very popular globally, especially in Asia and the Americas, but it wouldn’t rank this high compared to other meats. The correct order of global meat consumption generally places <b>*chicken, pork, and beef* at the top, with fish also being significant when considering the entire category rather than specific species. The list you received seems more like a mixture of globally popular animals but doesn&#39;t reflect actual global consumption volumes. One cow can feed 3000~10000 people or more 61. Dudes sister is the 9th most eaten animal on the planet apparently 62. my brother has a...... SISTER HAHAHAHAHAHAHAA 63. Holy Cow to the guy who told &quot;Cow&quot ;... 64. Thought he was going to say dog…I should go to bed 66. Octopus... �’ octopus ? Octopus!?😭 67. He said sister. The sister😂😂 68. He might have a secret craving for Brian&#39;s sister. Pork comes first followed by chicken then beef. Rabbit and dogs are best. The Peruvians eats pigeons. Guinea pig, nutria, iguana… Mostly south east Asia and South America. Tuna chicken and beef are the top 3 in Australia, I’m pretty surr 93. You should try grilled crocodile meat. No11 is DOG..WE TALKING WORLDWIDE. If this was a De Zerbi Brighton, it could have been more. Brighton were so poor against us and this why some fans feel like United has improved. United has not improved, it&#39;s just that Brighton were not the same as the Brighton under de Zerbi. This list is in terms of how many animals are eaten, rather than the volume of food eaten. This list is based on actual tonnage and not on the number of animals or fish. A single
+Pork is the most widely eaten meat in the world (36%) followed by poultry (33%), beef (24%), and goats/sheep (5) Lamb, Goat, sheep are the happiest 10. Never expected joke in this serious conversation. The U.S. consumes over 12 million tons of beef. Only 350,000 tons of octopus were eaten last year worldwide. Almost a billion people don't eat beef in India. 1 cow gives you approx over 800+ meals, whilst 1 Chicken gives you around 5 meals. You only need to kill 1 cow to feed 800 humans, but 160 Chickens to feed the same amount. This should be redone based on weight instead of raw units. Ister is among the most eaten things :&#39;s a next degree violation. Thank God i am veggy by birth... PROUD TO BE ... HARE SRINIVASA.
+
+Transcribe Summary:
+ can you guess the top ten animals that humans eat per year cows now it's shocking wait wait it's worldwide worldwide like top fifteen chicken chicken is number one. lobster lobster small sardine sardines is the second most eat an animal that's ridiculous because they're so tiny oysters least or number six think about the fried italian appetizer octopus octopuses number seven and now you gotta get out of or pig pig."My brother has a sister. ow my brother your brother had a sister what does he had a rabbit rabbit Rabbit rabbit rabbit yes or rabbits are number nine" "I think I have a sister" "He had a rabbits. rabbit rabbit rabbit" "Yes or rabbits were number nine."
 
 Sentiment Analysis (Viewers' opinions):
-Positive: 32.0%
-Neutral: 45.5%
-Negative: 22.5%
+Positive: 28.0%
+Neutral: 50.0%
+Negative: 22.0%
 
 Key Topics in Comments (Detailed):
 
 Topic 1:
+- 9. Lamb, Goat, sheep are the happiest
+- 13. Pork is the most widely eaten meat in the world (36%) followed by poultry (33%), beef (24%), and goats/sheep (5%). Googled it
+- 19. deer, cows, goats, sheep and buffalos left the group.
+- 28. Octopus is on here but cows aren&#39;t? Tf
+- 48. Cows be laughing 😹
+
+Topic 2:
+- 31. Horses and sister got me 😂😂
+
+Topic 3:
+- 1. “My brother has a…” <br>“A sister” We’re talking about animals humans eat 😂
 - 2. For those confused, this list is ordered by number of animals slaughtered every year. A single cow feeds a lot of people, while a single person can eat many sardines or shrimp in a single seating, so it’s not really a popularity issue
 - 3. Lmao my brother has a........ sister 😂😂😂😂😂
 - 4. We are eating sisters out here? Damn that means I ain&#39;t safe 😅😂
-- 7. Cow not being on this is insanity
-- 8. “A sister” 😂😂 “no no no no”😂😂😂
-
-Topic 2:
-- 1. “My brother has a…” <br>“A sister” We’re talking about animals humans eat 😂
 - 5. <b>&quot;9... this one you&#39;re not gonna like&quot;</b><br>Me : <b>&quot;DOG!&quot;</b>
-- 6. He literatlly told him &quot;your sister is the 8th most eaten animal in the world&quot;<br><br>Thats wild 💀
-- 11. &quot;A sister!&quot;  &quot;Bro, this is a family show...&quot;
-- 14. &quot;A sister&quot; This made me rolling 😂😂😂
-
-Topic 3:
-- 12. I thought he was boutta say dog
-- 65. Thought he was going to say dog…I should go to bed
-- 99. No11 is DOG..WE TALKING WORLDWIDE 😂😂
-- 104. Totally thought you guys were gonna say guinea pig for number 9
-- 105. I thought he was going g dog for a minute 😂
 
 Top 20 Keywords (Most Repeated Words):
-br: 122
-quot: 56
-39: 48
-sister: 41
-cow: 28
-list: 24
-s: 23
-chicken: 22
-like: 21
-beef: 21
-animals: 20
-t: 20
-consumed: 18
-meat: 17
-1: 15
-eat: 15
-sardines: 15
-eaten: 15
-fish: 15
-dog: 14
+quot: 24
+sister: 19
+br: 13
+39: 10
+cow: 7
+b: 6
+brother: 5
+1: 4
+s: 4
+like: 4
+dog: 4
+eaten: 4
+bro: 4
+beef: 4
+eat: 3
+list: 3
+year: 3
+single: 3
+people: 3
+t: 3
