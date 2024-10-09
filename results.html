@@ -1,17 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Results</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results</title>
+    <link rel="stylesheet" href="/static/styles.css">  <!-- Updated path -->
 </head>
 <body>
-    <h1>Results</h1>
+    <div class="container">
+        <h1>Analysis Results</h1>
+        <pre id="results">Loading results...</pre> <!-- Preformatted text for displaying results -->
+        <button onclick="location.href='/'">Back to Home</button>
+    </div>
 
-    <h2>Transcription Summary:</h2>
-    <pre>{{ transcribe_summary }}</pre>
-
-    <h2>Comments Analysis:</h2>
-    <pre>{{ comments_analysis }}</pre>
-
-    <a href="/">Process another video</a>
+    <script>
+        // Fetch and display the contents of comments-analysis.txt
+        fetch('/results')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+                return response.text();
+            })
+            .then(data => {
+                document.getElementById('results').textContent = data;
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                document.getElementById('results').textContent = 'Error fetching results: ' + error.message;
+            });
+    </script>
 </body>
 </html>

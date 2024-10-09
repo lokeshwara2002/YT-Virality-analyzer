@@ -3,16 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Analysis</title>
+    <title>YouTube Video Analysis</title>
+    <link rel="stylesheet" href="/static/styles.css">  <!-- Updated path -->
 </head>
 <body>
-    <h1>Video Analysis</h1>
-    <form action="/process" method="post">
-        <label for="link">YouTube Link:</label>
-        <input type="text" id="link" name="link" required>
-        <button type="submit">Process</button>
-    </form>
-    <br>
-    <a href="/results">View Analysis Results</a>
+    <div class="container">
+        <h1>YouTube Video Analysis</h1>
+        <form action="/process" method="post" id="video-form">
+            <label for="link">YouTube Link:</label>
+            <input type="text" id="link" name="link" placeholder="Enter YouTube link here" required="">
+            <button type="submit">Process</button>
+        </form>
+        <div class="results-container">
+            <a href="/results" class="results-link" id="view-results">View Analysis Results</a>
+        </div>
+    </div>
 </body>
 </html>
