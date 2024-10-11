@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Apply a linear gradient background */
+        body {
+            margin: 0;
+            padding: 100px 0 0 0; /* Adjusted top padding */
+            height: 100vh;
+            background: linear-gradient(to right, #ffa500, #1e90ff); /* Orange to Blue Gradient */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* Align items to the start */
+        }
+
+        /* Center the container and set the maximum width */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-width: 800px; /* Adjust max width as needed */
+            margin: 20px;
+        }
+
+        /* Set fixed size for the canvas elements */
+        canvas {
+            width: 800px !important; /* Fixed width */
+            height: 800px !important; /* Fixed height */
+            border-radius: 10px; /* Rounded corners for a smooth look */
+            background-color: rgba(255, 255, 255, 0.2); /* Transparent glass-like effect */
+            backdrop-filter: blur(10px); /* Optional: adds a blur effect behind the canvas */
+        }
+
+        /* Style for the headings */
+        h1 {
+            font-size: 28px; /* Heading size */
+            text-align: center; /* Center align headings */
+            color: #fff; /* White color for headings */
+            margin: 20px 0; /* Spacing above and below headings */
+        }
+
+        /* Style for legend and chart text */
+        .chartjs-render-monitor {
+            font-size: 16px; /* Adjust for the text inside the charts */
+        }
+
+        /* Style for legend */
+        .chart-legend {
+            font-size: 16px; /* Adjust for the legend text */
+            color: #fff; /* White color for legend text */
+        }
+        .button {
+            background-color: #4CAF50; /* Green background */
+            border: none; /* Remove borders */
+            color: white; /* White text */
+            padding: 15px 32px; /* Some padding */
+            text-align: center; /* Center the text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Make the link behave like a button */
+            font-size: 16px; /* Increase the font size */
+            margin: 4px 2px; /* Some margin */
+            cursor: pointer; /* Pointer/hand icon */
+            border-radius: 8px; /* Rounded corners */
+            transition: background-color 0.3s; /* Smooth hover effect */
+        }
+        
+        .button:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sentiment Analysis</h1>
+        <canvas id="sentimentChart"></canvas>
+        
+        <h1>Top Keywords</h1>
+        <canvas id="keywordChart"></canvas>
+        <div style="text-align: center; margin-bottom: 50px;">
+            <a href="/" class="button">Go Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        async function fetchData() {
+            const response = await fetch('/results');
+            const text = await response.text();
+            return text;
+        }
+
+        function parseData(text) {
+            const lines = text.split('\n');
+            let sentiment = {};
+            let keywords = {};
+            let readingSentiment = false;
+            let readingKeywords = false;
+
+            for (let line of lines) {
+                line = line.trim();
+                if (line.startsWith("Sentiment Analysis:")) {
+                    readingSentiment = true;
+                    readingKeywords = false;
+                    continue;
+                }
+                if (line.startsWith("Top 20 Keywords")) {
+                    readingSentiment = false;
+                    readingKeywords = true;
+                    continue;
+                }
+                if (readingSentiment) {
+                    const match = line.match(/(\w+): ([\d.]+)%/);
+                    if (match) {
+                        sentiment[match[1]] = parseFloat(match[2]);
+                    }
+                }
+                if (readingKeywords) {
+                    const match = line.match(/(.*?): (\d+)/);
+                    if (match) {
+                        keywords[match[1]] = parseInt(match[2]);
+                    }
+                }
+            }
+            return { sentiment, keywords };
+        }
+
+        function createSentimentChart(sentiment) {
+            const ctx = document.getElementById('sentimentChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(sentiment),
+                    datasets: [{
+                        label: 'Sentiment Analysis',
+                        data: Object.values(sentiment),
+                        backgroundColor: ['#36A2EB', '#FFCE56', '#FF6384'], // Solid colors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    layout: {
+                        padding: {
+                            top: 30, // 100px padding on the top
+                            bottom: 30, // 100px padding on the bottom
+                            left: 30, // 100px padding on the left
+                            right: 30 // 100px padding on the right
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 16 // Set the font size for the legend
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Sentiment Distribution',
+                            font: {
+                                size: 22 // Set the title font size
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ' + context.raw.toFixed(2) + '%'; // Format the tooltip
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createKeywordChart(keywords) {
+            const ctx = document.getElementById('keywordChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(keywords),
+                    datasets: [{
+                        label: 'Keyword Frequency',
+                        data: Object.values(keywords),
+                        backgroundColor: '#FF5733', // Solid color for bars
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: {
+                                    size: 16 // Set the font size for the y-axis ticks
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    size: 16 // Set the font size for the x-axis ticks
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 16 // Set the font size for the legend
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Top Keywords',
+                            font: {
+                                size: 22 // Set the title font size
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        fetchData().then(text => {
+            const { sentiment, keywords } = parseData(text);
+            createSentimentChart(sentiment);
+            createKeywordChart(keywords);
+        });
+    </script>
+</body>
+</html>

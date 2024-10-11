@@ -4,31 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analysis Results</title>
-    <link rel="stylesheet" href="/static/styles.css">  <!-- Updated path -->
+    <link rel="stylesheet" href="/static/styles.css">  <!-- Link to your CSS file -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            /* Added margin at the top */
+            margin-top: 700px; /* Adjust the value as needed */
+        }
+        .container {
+            max-width: 800px; /* Limit the width of the container */
+            margin: 0 auto; /* Center the container */
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        pre {
+            white-space: pre-wrap; /* Allows long text to wrap */
+            word-wrap: break-word; /* Breaks long words to avoid overflow */
+            background: #eee; /* Light background for better readability */
+            padding: 10px; /* Padding inside the <pre> tag */
+            border-radius: 5px; /* Rounded corners */
+            overflow: auto; /* Adds a scrollbar if needed */
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #007bff; /* Button color */
+            color: white; /* Button text color */
+            text-decoration: none; /* No underline */
+            border-radius: 5px; /* Rounded corners */
+        }
+        .back-button:hover {
+            background-color: #0056b3; /* Darker shade on hover */
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>Analysis Results</h1>
-        <pre id="results">Loading results...</pre> <!-- Preformatted text for displaying results -->
-        <button onclick="location.href='/'">Back to Home</button>
+        <pre id="results">
+            Loading results...
+        </pre>
+        <a href="/" class="back-button">Back to Analysis</a>
     </div>
-
+    
     <script>
-        // Fetch and display the contents of comments-analysis.txt
-        fetch('/results')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
-                }
-                return response.text();
-            })
-            .then(data => {
-                document.getElementById('results').textContent = data;
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-                document.getElementById('results').textContent = 'Error fetching results: ' + error.message;
-            });
+        async function fetchResults() {
+            const response = await fetch('/results');
+            if (response.ok) {
+                const resultsText = await response.text();
+                document.getElementById('results').textContent = resultsText;
+            } else {
+                document.getElementById('results').textContent = 'Failed to load results.';
+            }
+        }
+
+        // Fetch the results when the page loads
+        window.onload = fetchResults;
     </script>
 </body>
 </html>

@@ -1,6 +1,8 @@
 import os
 import googleapiclient.discovery
 import logging
+import re
+import html
 
 # Replace with your YouTube Data API key
 API_KEY = "AIzaSyCKuURoscr8GES6QWsCJKvJ1T4hzN1JZ4Q"
@@ -8,18 +10,27 @@ API_KEY = "AIzaSyCKuURoscr8GES6QWsCJKvJ1T4hzN1JZ4Q"
 # Set up logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
+# Function to clean comments by unescaping HTML entities and stripping HTML tags
+def clean_comment(comment):
+    # Unescape HTML entities
+    comment = html.unescape(comment)
+    # Remove HTML tags using regex
+    comment = re.sub(r'<.*?>', '', comment)  # Remove any HTML tags
+    return comment.strip()
+
 # Function to extract video ID from YouTube URL
 def get_video_id(youtube_url):
-    # Check for the standard YouTube video URL
     if "v=" in youtube_url:
         return youtube_url.split("v=")[1].split("&")[0]
-    # Check for YouTube Shorts URL
     elif "shorts/" in youtube_url:
         return youtube_url.split("shorts/")[1].split("?")[0]
+        # Case for shortened youtu.be URL
+    elif "youtu.be/" in youtube_url:
+        return youtube_url.split("youtu.be/")[1].split("?")[0]
     return None
 
 # Function to fetch top comments
-def fetch_top_comments(video_id, api_key, max_results=50):
+def fetch_top_comments(video_id, api_key, max_results=1000):
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=api_key)
 
     comments = []
@@ -30,7 +41,7 @@ def fetch_top_comments(video_id, api_key, max_results=50):
             request = youtube.commentThreads().list(
                 part="snippet",
                 videoId=video_id,
-                maxResults=min(max_results - len(comments), 50),
+                maxResults=min(max_results - len(comments), 1000),
                 pageToken=next_page_token,
                 order="relevance",
             )
@@ -38,7 +49,10 @@ def fetch_top_comments(video_id, api_key, max_results=50):
 
             for item in response.get("items", []):
                 comment = item["snippet"]["topLevelComment"]["snippet"]["textDisplay"]
-                comments.append(comment)
+                comment = clean_comment(comment)  # Clean the comment
+                # Filter out empty comments
+                if comment:
+                    comments.append(comment)
 
             next_page_token = response.get("nextPageToken")
             if not next_page_token:

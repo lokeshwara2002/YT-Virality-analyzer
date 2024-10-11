@@ -5,17 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube Video Analysis</title>
     <link rel="stylesheet" href="/static/styles.css">  <!-- Updated path -->
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon"> <!-- Favicon link -->
 </head>
 <body>
     <div class="container">
-        <h1>YouTube Video Analysis</h1>
+        <h1>
+            <img src="/static/favicon.ico" alt="Logo" style="width:50px; vertical-align: middle; margin-right: 10px;"> <!-- Logo before title -->
+            YouTube Video Analysis
+        </h1>
         <form action="/process" method="post" id="video-form">
             <label for="link">YouTube Link:</label>
             <input type="text" id="link" name="link" placeholder="Enter YouTube link here" required="">
-            <button type="submit">Process</button>
+            <div class="button-group"> <!-- Button group for better alignment -->
+                <button type="submit" class="btn process-btn">Process</button>
+                <a href="/results-page" class="btn results-button">Results Page</a> <!-- Updated Results Page Button -->
+                <a href="/visual-page" class="btn visual-button">Visual Page</a> <!-- New Visual Page Button -->
+            </div>
         </form>
         <div class="results-container">
-            <a href="/results" class="results-link" id="view-results">View Analysis Results</a>
+            <a href="/results" class="results-link" id="download-results">Download Analysis Results</a>
         </div>
     </div>
 </body>

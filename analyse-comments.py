@@ -2,10 +2,8 @@ import re
 import spacy
 from transformers import pipeline
 from textblob import TextBlob
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.cluster import KMeans
-from collections import Counter
-import string
 
 # Load the spaCy model for NER
 nlp = spacy.load("en_core_web_sm")
@@ -66,99 +64,144 @@ def analyze_sentiment(comments):
 
     return sentiments
 
-# Function to extract top 20 most repeated single words
+# Function to clean and tokenize comments
+def clean_and_tokenize(text):
+    # Remove HTML tags and unwanted characters
+    cleaned_text = re.sub(r'<.*?>', '', text)  # Removes HTML tags like <br>, <b>
+    cleaned_text = re.sub(r'&quot;', '', cleaned_text)  # Remove &quot;
+    cleaned_text = re.sub(r'\d+', '', cleaned_text)  # Remove numbers
+    cleaned_text = re.sub(r'[^\w\s]', '', cleaned_text)  # Remove punctuation
+    cleaned_text = cleaned_text.lower()  # Convert to lowercase
+    words = cleaned_text.split()
+    return words
+
+# Function to extract top 20 most repeated two-word keywords (bigrams)
 def extract_top_keywords(comments, top_n=20):
-    all_words = " ".join(comments).lower()
-    words = re.findall(r'\b\w+\b', all_words)
-    words = [word for word in words if word not in spacy.lang.en.stop_words.STOP_WORDS and word not in string.punctuation]
-    word_counts = Counter(words)
-    return word_counts.most_common(top_n)
+    # Initialize the CountVectorizer for bigrams
+    vectorizer = CountVectorizer(ngram_range=(2, 2), stop_words='english')
+    X = vectorizer.fit_transform(comments)
+
+    # Get the counts of each bigram
+    bigram_counts = X.toarray().sum(axis=0)
+    bigram_feature_names = vectorizer.get_feature_names_out()
+
+    # Combine bigrams and their counts into a dictionary
+    bigram_dict = dict(zip(bigram_feature_names, bigram_counts))
+
+    # Updated list of irrelevant words to ignore
+    ignore_words = [
+        'br', 'quot', 'nbsp', 'amp','video','videos', '39', 's', 'the', 'a', 'an', 'and', 
+        'is', 'to', 'in', 'on', 'no', 'i', 'of', 'this', 'that', 'for', 
+        'it', 'as', 'are', 'with', 'was', 'but', 'be', 'at', 'by', 
+        'not', 'you', 'so', 'he', 'she', 'they', 'them', 'their', 
+        'theirs', 'my', 'me', 'us', 'we', 'our', 'hers', 'him', 
+        'himself', 'herself', 'itself', 'what', 'which', 'who', 
+        'whom', 'whose', 'if', 'than', 'then', 'because', 'when', 
+        'where', 'while', 'although', 'since', 'after', 'before', 
+        'during', 'but', 'or', 'yet', 'for', 'nor', 'so', 'either', 
+        'neither', 'each', 'every', 'some', 'any', 'all', 'most', 
+        'few', 'less', 'more', 'such', 'like', 'just', 'now', 'only', 
+        'also', 'too', 'very', 'just', 'then', 'than', 'whoever', 
+        'whenever', 'whatever', 'whichever', 'something', 'anything',
+        'never', 'has', 'were', 'about', 'how', 'can', 'its', 'everything', 
+        'nothing', 'somebody', 'anybody', 'everybody', 'nobody', 
+        'somewhere', 'anywhere', 'everywhere', 'nowhere', 'together', 
+        'alone', 'first', 'next', 'last', 'main', 'man', 'primary', 
+        'secondary', 'major', 'minor'
+    ]  # Add more if needed
+
+    # Filter out irrelevant bigrams
+    filtered_bigrams = {k: v for k, v in bigram_dict.items() if k not in ignore_words}
+
+    # Get the 20 most common bigrams
+    top_bigrams = sorted(filtered_bigrams.items(), key=lambda item: item[1], reverse=True)[:top_n]
+    return top_bigrams
 
 # Read the transcribe summary
 def read_transcribe_summary(file_path='transcribe-summary.txt'):
     with open(file_path, 'r') as file:
         return file.read()
 
+# Function to cluster comments and assign descriptive topics
+def perform_clustering(comments, num_clusters=3):
+    vectorizer = CountVectorizer(stop_words='english')
+    X = vectorizer.fit_transform(comments)
+
+    kmeans = KMeans(n_clusters=num_clusters, random_state=42)
+    kmeans.fit(X)  # Ensure KMeans is fitted
+
+    clusters = {i: [] for i in range(num_clusters)}
+
+    for idx, label in enumerate(kmeans.labels_):
+        clusters[label].append(comments[idx])
+
+    # Extract top terms for each cluster
+    order_centroids = kmeans.cluster_centers_.argsort()[:, ::-1]
+    terms = vectorizer.get_feature_names_out()
+
+    cluster_topics = {}
+    for i in range(num_clusters):
+        top_terms = [terms[ind] for ind in order_centroids[i, :5]]
+        cluster_topics[i] = " ".join(top_terms)
+
+    return clusters, cluster_topics
+
 # Main analysis function
 def main(file_name="comments.txt"):
     comments = load_comments(file_name)
 
-    # Cluster comments to group them into detailed topics
-    def cluster_comments(comments, num_clusters=3):
-        vectorizer = TfidfVectorizer(stop_words='english')
-        X = vectorizer.fit_transform(comments)
-
-        kmeans = KMeans(n_clusters=num_clusters, random_state=42).fit(X)
-        clusters = {i: [] for i in range(num_clusters)}
-
-        for idx, label in enumerate(kmeans.labels_):
-            clusters[label].append(comments[idx])
-
-        return clusters
-
     # Extract timestamps and their associated comments
     timestamp_comments = extract_timestamps(comments)
-    if timestamp_comments:
-        print("Comments mentioning specific parts of the video (timestamps):")
-        for timestamps, comment in timestamp_comments:
-            print(f"Timestamps: {timestamps}, Comment: {comment}\n")
-
+    
     # Summarize comments to describe what the video is about
     summary = summarize_comments(comments)
-    print("Summary of Comments (What the video is about):\n", summary)
-
-    # Sentiment analysis to describe viewers' opinions
-    sentiments = analyze_sentiment(comments)
-    print("\nSentiment Analysis (Viewers' opinions):")
-    print(f"Positive: {sentiments['positive']}%")
-    print(f"Neutral: {sentiments['neutral']}%")
-    print(f"Negative: {sentiments['negative']}%")
-
-    # Cluster comments to group them into detailed topics
-    clusters = cluster_comments(comments)
-    print("\nKey Topics in Comments (Detailed):")
-    for cluster_id, cluster_comments in clusters.items():
-        print(f"\nTopic {cluster_id + 1}:")
-        for comment in cluster_comments[:5]:
-            print(f"- {comment}")
-
-    # Extract top 20 most repeated single-worded keywords
-    top_keywords = extract_top_keywords(comments)
-    print("\nTop 20 Keywords (Most Repeated Words):")
-    for word, count in top_keywords:
-        print(f"{word}: {count}")
 
     # Read the transcribe summary
     transcribe_summary = read_transcribe_summary()
 
-    # Save the insights to comments-analysis.txt
+    # Sentiment analysis to describe viewers' opinions
+    sentiments = analyze_sentiment(comments)
+
+    # Extracting top 20 most repeated two-word keywords
+    top_keywords = extract_top_keywords(comments)
+
+    # Clustering comments to identify main topics
+    clusters, cluster_topics = perform_clustering(comments)
+
+    # Writing the analysis to a file
     with open("comments-analysis.txt", "w", encoding="utf-8") as f:
+
+
+        f.write("Transcription Summary:\n")
+        f.write(transcribe_summary + "\n\n")  # Write the transcription summary
+        
+        f.write("Summary of Comments:\n")
+        f.write(summary + "\n\n")
+
+        f.write("Sentiment Analysis:\n")
+        for sentiment, percentage in sentiments.items():
+            f.write(f"{sentiment.capitalize()}: {percentage}%\n")
+        f.write("\n")
+
+        f.write("Top 20 Keywords (Most Repeated Two-Word Phrases):\n")
+        for bigram, count in top_keywords:
+            f.write(f"{bigram}: {count}\n")
+        f.write("\n")
+
+        # Write timestamp-related comments to the file
         if timestamp_comments:
             f.write("Comments mentioning specific parts of the video (timestamps):\n")
             for timestamps, comment in timestamp_comments:
-                f.write(f"Timestamps: {timestamps}, Comment: {comment}\n")
+                f.write(f"Timestamps: {', '.join(timestamps)}, Comment: {comment}\n")
             f.write("\n")
 
-        f.write("Summary of Comments (What the video is about):\n")
-        f.write(f"{summary}\n\n")
-
-        f.write("Transcribe Summary:\n")
-        f.write(f"{transcribe_summary}\n\n")  # Write the transcribe summary here
-
-        f.write("Sentiment Analysis (Viewers' opinions):\n")
-        f.write(f"Positive: {sentiments['positive']}%\n")
-        f.write(f"Neutral: {sentiments['neutral']}%\n")
-        f.write(f"Negative: {sentiments['negative']}%\n\n")
-
-        f.write("Key Topics in Comments (Detailed):\n")
+        f.write("Clustered Comments with Identified Topics:\n")
         for cluster_id, cluster_comments in clusters.items():
-            f.write(f"\nTopic {cluster_id + 1}:\n")
+            topic_name = cluster_topics[cluster_id]
+            f.write(f"\nTopic: {topic_name}\n")
             for comment in cluster_comments[:5]:
                 f.write(f"- {comment}\n")
 
-        f.write("\nTop 20 Keywords (Most Repeated Words):\n")
-        for word, count in top_keywords:
-            f.write(f"{word}: {count}\n")
-
+# Run the analysis
 if __name__ == "__main__":
     main()

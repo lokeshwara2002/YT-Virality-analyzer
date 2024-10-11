@@ -41,14 +41,15 @@ label {
 input[type="text"] {
     width: 100%;
     padding: 10px; /* Increased padding for better input appearance */
-    margin-bottom: 15px; /* Add margin for spacing */
+    margin-bottom: 10px; /* Add margin for spacing */
     border: 1px solid #ccc; /* Border for input field */
     border-radius: 5px; /* Rounded corners */
     font-size: 16px; /* Larger font size for input */
 }
 
-button {
-    width: 100%; /* Full width button */
+button, .results-button {
+    display: inline-block; /* Ensure buttons align properly */
+    width: calc(50% - 10px); /* Full width for both buttons, with space between */
     background-color: #ffa500; /* Orange button */
     color: white; /* White text */
     border: none;
@@ -57,10 +58,11 @@ button {
     border-radius: 5px; /* Rounded corners */
     cursor: pointer;
     transition: background-color 0.3s; /* Smooth transition for hover effect */
+    text-align: center; /* Center text in buttons */
 }
 
 button:hover {
-    background-color: #1e90ff; /* Blue hover effect */
+    background-color: #1e90ff; /* Blue hover effect for process button */
 }
 
 .results-container {
@@ -72,4 +74,14 @@ button:hover {
     color: #1e90ff; /* Set color for results link */
     text-decoration: none;
     font-size: 16px; /* Consistent font size */
+}
+
+.results-button {
+    margin-left: 10px; /* Adds some space between buttons */
+    background-color: #007BFF; /* Button color for results */
+    transition: background-color 0.3s; /* Transition effect */
+}
+
+.results-button:hover {
+    background-color: #0056b3; /* Darker shade on hover for results button */
 }
